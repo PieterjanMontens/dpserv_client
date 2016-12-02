@@ -16,25 +16,35 @@ class dpserv_uplink:
     ########################
     def use_service(self,Url):
         self._data = self._getJson(Url)
-        return None
-
-    def list_collections(self,serviceUrl):
-        return None
+        return self
 
     def use_collection(self,collection,parameters=[]):
-        ColsUrl = self._getLink(self._data, "collections")
+        ## TODO: make a nice object of this so I could just chain methods cleanly
+        ColsUrl = self._getLink(self._data["links"], "collections")
         self._collections = self._getJson(ColsUrl)
-        ColUrl = self._getLink(self._collections,collection)
+        ColData = self._getContentById(self._collections["content"],collection)
+        ColUrl = self._getLink(ColData["links"],"self")
         self._collection = self._getJson(ColUrl,parameters)
-        return None
+        return self
 
-    def documents(self):
-        colUrl = self._collections_url(self._serviceurl)
+    def use_document(self,docDef):
+        DocUrl = self._getLink(docDef["links"],"self")
+        self._doc = self._getJson(DocUrl)
+        return self
 
+    def get_documents(self):
+        return self._collection["content"]
 
-        return None
+    def get_document(self):
+        return self._doc
 
-    def document(self,docUrl):
+    def find_document(self,docid):
+        MaskDef = self._getContentById(self._data["content"],"document_url_mask")
+        DocUrl = MaskDef["url_template"].replace(MaskDef["placeholder"], docid)
+        self._doc = self._getJson(DocUrl)
+        return self
+
+    def list_collections(self,serviceUrl):
         return None
 
     def dump(self):
@@ -48,23 +58,17 @@ class dpserv_uplink:
 
     ############### INTERNAL
     ########################
-    def collection_url(self, data, collection):
-        for link in data["links"]:
-            if link["rel"] == collection:
+    def _getLink(self, data, needle):
+        for link in data:
+            if link["rel"] == needle:
                 return link["href"]
-        raise IndexError("Link to collection {0} cannot be found.".format(collection))
+        raise IndexError("Link to {0} cannot be found.".format(needle))
 
-    def _collections_url(self, data):
-        for link in data["links"]:
-            if link["rel"] == "collections":
-                return link["href"]
-        raise IndexError("Link to collections cannot be found.")
-
-    def _getLink(self, data, element):
-        for link in data["links"]:
-            if link["rel"] == element:
-                return link["href"]
-        raise IndexError("Link to {0} cannot be found.".format(element))
+    def _getContentById(self, data, needle):
+        for content in data:
+            if content["id"] == needle:
+                return content
+        raise IndexError("Content id {0} cannot be found.".format(needle))
 
     def _getJson(self,Url,Params=None):
         logger.debug("Uplink accessing {0} ({1})".format(Url,Params))
