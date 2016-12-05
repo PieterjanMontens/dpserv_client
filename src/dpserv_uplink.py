@@ -9,6 +9,11 @@ class dpserv_uplink:
     _collections = []
     _collection = []
 
+    _ctype2mime = {'text'   : 'text/plain'
+                  ,'html'   : 'text/html'
+                  ,'pdf'    : 'application/pdf'
+                  }
+
     def __init__(self):
         return None
 
@@ -44,8 +49,15 @@ class dpserv_uplink:
         self._doc = self._getJson(DocUrl)
         return self
 
-    def list_collections(self,serviceUrl):
-        return None
+    def get_collections(self):
+        ColsUrl = self._getLink(self._data["links"], "collections")
+        self._collections = self._getJson(ColsUrl)
+        return self._collections["collections"]
+
+    def get_content(self,ctype="text"):
+        Mime = self._ctype2mime[ctype]
+        ContUrl = self._getLink(self._doc["links"], "content")
+        return self._getFile(ContUrl,Mime)
 
     def dump(self):
         print("Root data:")
@@ -74,5 +86,17 @@ class dpserv_uplink:
         logger.debug("Uplink accessing {0} ({1})".format(Url,Params))
         rs = requests.get(Url, params=Params)
         if rs.status_code != 200:
-            raise ApiError('GET {0} {1}'.format(serviceUrl,rs.status_code))
+            logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
+            return {}
         return rs.json()
+
+    def _getFile(self,Url,Accept):
+        logger.debug("Obtaining file from {0} in {1}".format(Url,Accept))
+        headers = {'accept': Accept}
+        rs = requests.get(Url, headers=headers)
+        if rs.status_code != 200:
+            logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
+            raise Exception("Error {0} in accessing {1}".format(rs.status_code,Url))
+            return ''
+        return rs.text
+
