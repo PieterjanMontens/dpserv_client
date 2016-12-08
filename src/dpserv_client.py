@@ -2,11 +2,14 @@
 ## Pieterjan Montens 2016
 ## https://github.com/PieterjanMontens
 import optparse, json, yaml
-import config
+import os,config
 import logging, logging.config
 
 from dpserv_uplink import dpserv_uplink
 from dpserv_output import dpserv_output
+
+abspath = os.path.abspath(__file__)
+os.chdir(os.path.dirname(abspath))
 
 with open('./logging.conf','r') as f:
     logConf = yaml.load(f)
