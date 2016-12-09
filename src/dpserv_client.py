@@ -3,7 +3,7 @@
 ## https://github.com/PieterjanMontens
 import optparse, json, yaml
 import os,config
-import logging, logging.config
+import logging, logging.config, logging.handlers
 
 from dpserv_uplink import dpserv_uplink
 from dpserv_output import dpserv_output
@@ -19,7 +19,6 @@ logger = logging.getLogger('dpservClient')
 ##################################################################### MAIN STUFF
 ################################################################################
 def main():
-    logger.info("dpserv_client started")
     ############ Handle input & parameters
     p = optparse.OptionParser()
     p.add_option('--url', '-u', action="store", default=None, help="Service root URL")
@@ -32,6 +31,7 @@ def main():
     p.add_option('--include','-i',action="append",dest="related_files",help="Include related documents")
     p.add_option('--meta','-m',action="store_true",default=False,help="Only output meta (no binary/text content)")
     p.add_option('--output',action="store",default="text",help="")
+    p.add_option('--quiet',action="store_true",default=False,help="")
     options, arguments = p.parse_args()
 
     if not options.url:
@@ -39,6 +39,11 @@ def main():
 
     if options.parameters:
         options.parameters = json.loads(options.parameters)
+
+    if options.quiet:
+        logger.removeHandler(logger.handlers[0])
+
+    logger.info("dpserv_client started")
 
 
     logger.info("Accessing {0}, collection {1} (parameters: {2}) Json: {3} Dir: {4} Include: {5}".format(
