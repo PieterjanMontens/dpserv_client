@@ -32,10 +32,14 @@ def main():
     p.add_option('--meta','-m',action="store_true",default=False,help="Only output meta (no binary/text content)")
     p.add_option('--output',action="store",default="text",help="")
     p.add_option('--quiet',action="store_true",default=False,help="")
+    p.add_option('--debug',action="store_true", default=False, help="Enable debug mode")
     options, arguments = p.parse_args()
 
     if not options.url:
         p.error('Service url not defined')
+
+    if options.debug:
+        logger.setLevel(logging.DEBUG)
 
     if options.parameters:
         options.parameters = json.loads(options.parameters)
