@@ -8,6 +8,7 @@ Auto-discovering import client for [dpserv](https://github.com/RvS-CdE/dpserv) d
  * Discovers and follows links provided by dpserv
  * Exports meta and content in json format
  * Can use client private key
+ * Inclusion of optional related files (project, translation)
 
 ## Technology
 
@@ -33,7 +34,7 @@ Particular document meta-data:
 
     ./dpserv_client.py -u http://www.raadvst-consetat.be/dbx/avis --document 52060 --meta
 
-Document with content and all, in json format:
+Document with metadata, content and german translation, in JSON format:
 
-    ./dpserv_client.py -u http://www.raadvst-consetat.be/dbx/avis --document 52060
+    ./dpserv_client.py -u http://www.raadvst-consetat.be/dbx/avis --document 56372 --include german_translation
  

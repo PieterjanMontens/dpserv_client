@@ -59,9 +59,9 @@ class dpserv_uplink:
         self._collections = self._getJson(ColsUrl)
         return self._collections["collections"]
 
-    def get_content(self,ctype="text"):
+    def get_content(self,ctype="text",rel="content"):
         Mime = self._ctype2mime[ctype]
-        ContUrl = self._getLink(self._doc["links"], "content")
+        ContUrl = self._getLink(self._doc["links"], rel)
         return self._getFile(ContUrl,Mime)
 
     def dump(self):

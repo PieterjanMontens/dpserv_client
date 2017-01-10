@@ -32,12 +32,12 @@ def main():
     p.add_option('--output',action="store", default="text",help="")
     p.add_option('--quiet',action="store_true", default=False,help="")
     p.add_option('--debug',action="store_true", default=False, help="Enable debug mode")
+    p.add_option('--include','-i',action="append", default=[], dest="related_files",help="Include related documents (ex: german_translation, project)")
 
     p.add_option('--key',action="store", default=None, help="Secret API client identifier key")
     ## NOT USED:
     p.add_option('--dir_out','-d',action="store", default=None,help="Output directory")
     p.add_option('--json_out','-j',action="store_true", default=False, help="Output JSON")
-    p.add_option('--include','-i',action="append", dest="related_files",help="Include related documents")
 
     options, arguments = p.parse_args()
 
@@ -80,6 +80,8 @@ def main():
 
         if not options.meta:
                 data["content"] = uplink.get_content(options.output)
+                for rel in options.related_files :
+                    data["content_%s" % rel] = uplink.get_content(options.output,rel)
 
         output.msg("Output for %s:" % options.document) \
               .content(data) \
