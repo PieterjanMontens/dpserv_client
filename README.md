@@ -26,6 +26,7 @@ Auto-discovering import client for dpserv document server, able to navigate the 
 
 ### Examples
 List available collections:
+
     python3 dpserv_client.py -u http://www.raadvst-consetat.be/dbx/avis --list_collections
 
 Particular document meta-data:
