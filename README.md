@@ -1,7 +1,7 @@
 # dpserv_client
 *work in progress*
 
-Auto-discovering import client for dpserv document server, able to navigate the server API from the root URL on.
+Auto-discovering import client for [dpserv](https://github.com/RvS-CdE/dpserv) document server, able to navigate the server API from the root URL on.
 
 ## Current state
 
@@ -22,7 +22,7 @@ Auto-discovering import client for dpserv document server, able to navigate the 
 
  * Clone repository
  * Make src/dpserv_client.py executable (or execute with python3)
- * Point script to root URL and provide parameters
+ * Point script to dpserv root URL and provide parameters
 
 ### Examples
 List available collections:
