@@ -5,6 +5,7 @@ import requests, logging
 logger = logging.getLogger('dpservClient')
 
 class dpserv_uplink:
+    _key = ''
     _data = []
     _collections = []
     _collection = []
@@ -19,11 +20,15 @@ class dpserv_uplink:
 
     #################### API
     ########################
+    def use_key(self, Key):
+        self._key = Key
+        return self
+
     def use_service(self,Url):
         self._data = self._getJson(Url)
         return self
 
-    def use_collection(self,collection,parameters=[]):
+    def use_collection(self,collection,parameters={}):
         ## TODO: make a nice object of this so I could just chain methods cleanly
         ColsUrl = self._getLink(self._data["links"], "collections")
         self._collections = self._getJson(ColsUrl)
@@ -82,8 +87,9 @@ class dpserv_uplink:
                 return content
         raise IndexError("Content id {0} cannot be found.".format(needle))
 
-    def _getJson(self,Url,Params=None):
+    def _getJson(self,Url,Params={}):
         logger.debug("Uplink accessing {0} ({1})".format(Url,Params))
+        Params['api_key'] = self._key
         rs = requests.get(Url, params=Params)
         if rs.status_code != 200:
             logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
@@ -93,7 +99,8 @@ class dpserv_uplink:
     def _getFile(self,Url,Accept):
         logger.debug("Obtaining file from {0} in {1}".format(Url,Accept))
         headers = {'accept': Accept}
-        rs = requests.get(Url, headers=headers)
+        params = {'api_key' : self._key}
+        rs = requests.get(Url, headers=headers, params=params)
         if rs.status_code != 200:
             logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
             raise Exception("Error {0} in accessing {1}".format(rs.status_code,Url))
