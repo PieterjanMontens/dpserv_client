@@ -81,7 +81,10 @@ def main():
         if not options.meta:
                 data["content"] = uplink.get_content(options.output)
                 for rel in options.related_files :
-                    data["content_%s" % rel] = uplink.get_content(options.output,rel)
+                    try: 
+                        data["content_%s" % rel] = uplink.get_content(options.output,rel)
+                    except Exception:
+                        pass
 
         output.msg("Output for %s:" % options.document) \
               .content(data) \

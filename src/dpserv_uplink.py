@@ -102,7 +102,7 @@ class dpserv_uplink:
         params = {'api_key' : self._key}
         rs = requests.get(Url, headers=headers, params=params)
         if rs.status_code != 200:
-            logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
+            #logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
             raise Exception("Error {0} in accessing {1}".format(rs.status_code,Url))
             return ''
         return rs.text
