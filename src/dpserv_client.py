@@ -27,12 +27,13 @@ def main():
     p.add_option('--collection','-c', action="store", default="all", help="Collection to use (default: all)")
     p.add_option('--document', action="store", default=None, help="Document ID to consult")
     p.add_option('--list_collections','-l', action="store_true",dest="listCollections",default=False, help="List collections")
-    p.add_option('--parameters','-p',action="store", default=[], help="Optional collection parameters, in json")
+    p.add_option('--parameters','-p',action="store", default={}, help="Optional collection parameters, in json")
     p.add_option('--meta','-m',action="store_true", default=False,help="Only output meta (no binary/text content)")
     p.add_option('--output',action="store", default="text",help="")
     p.add_option('--quiet',action="store_true", default=False,help="")
     p.add_option('--debug',action="store_true", default=False, help="Enable debug mode")
     p.add_option('--include','-i',action="append", default=[], dest="related_files",help="Include related documents (ex: german_translation, project)")
+    p.add_option('--check_related',action="append",default=[], dest="check_related",help="Check if related file is available")
 
     p.add_option('--key',action="store", default=None, help="Secret API client identifier key")
     ## NOT USED:
@@ -84,7 +85,12 @@ def main():
                     try: 
                         data["content_%s" % rel] = uplink.get_content(options.output,rel)
                     except Exception:
-                        pass
+                        data["content_%s" % rel] = ''
+
+        data["related"] = []
+        for check in options.check_related:
+            if uplink.get_link(check):
+                data["related"].append(check)
 
         output.msg("Output for %s:" % options.document) \
               .content(data) \

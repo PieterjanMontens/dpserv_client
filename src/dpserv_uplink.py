@@ -45,8 +45,15 @@ class dpserv_uplink:
     def get_documents(self):
         return self._collection["content"]
 
+
     def get_document(self):
         return self._doc
+
+    def get_link(self,link):
+        try:
+            return self._getLink(self._doc["links"], link)
+        except IndexError:
+            return False
 
     def find_document(self,docid):
         MaskDef = self._getContentById(self._data["content"],"document_url_mask")
@@ -90,7 +97,7 @@ class dpserv_uplink:
     def _getJson(self,Url,Params={}):
         logger.debug("Uplink accessing {0} ({1})".format(Url,Params))
         Params['api_key'] = self._key
-        rs = requests.get(Url, params=Params)
+        rs = requests.get(Url, params=Params, timeout=30)
         if rs.status_code != 200:
             logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
             return {}
@@ -100,7 +107,7 @@ class dpserv_uplink:
         logger.debug("Obtaining file from {0} in {1}".format(Url,Accept))
         headers = {'accept': Accept}
         params = {'api_key' : self._key}
-        rs = requests.get(Url, headers=headers, params=params)
+        rs = requests.get(Url, headers=headers, params=params, timeout=30)
         if rs.status_code != 200:
             #logger.error("Error {0} in accessing {1}".format(rs.status_code,Url))
             raise Exception("Error {0} in accessing {1}".format(rs.status_code,Url))
